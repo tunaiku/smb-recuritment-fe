@@ -126,6 +126,40 @@ module.exports = (baseUrl, enableAuth) => {
             },
           },
         },
+        Bank: {
+          properties: {
+            name: {
+              type: "string",
+            },
+            code: {
+              type: "string",
+            },
+          },
+        },
+        CreateTransactionRequest: {
+          properties: {
+            accountNumber: {
+              type: "string",
+            },
+            receiver: {
+              type: "object",
+              properties: {
+                accountNumber: {
+                  type: "string",
+                },
+                bankCode: {
+                  type: "string",
+                },
+              },
+            },
+            transactionCode: {
+              type: "string",
+            },
+            amount: {
+              type: "number",
+            },
+          },
+        },
         AuthorizationRequest: {
           properties: {
             username: {
@@ -169,10 +203,10 @@ module.exports = (baseUrl, enableAuth) => {
               type: "string",
             },
             amount: {
-              type: "string",
+              type: "number",
             },
             currency: {
-              type: "integer",
+              type: "string",
             },
             transactionCode: {
               type: "string",
@@ -251,6 +285,35 @@ module.exports = (baseUrl, enableAuth) => {
             },
           },
         },
+        post: {
+          ...securityOpts,
+          tags: ["User's Actions"],
+          summary: "Create a new transaction",
+          requestBody: {
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CreateTransactionRequest",
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: "the transaction successfully stored",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Transaction",
+                  },
+                },
+              },
+            },
+            401: {
+              $ref: "#/components/responses/401",
+            },
+          },
+        },
       },
       "/secure/_self/transaction/{transactionId}": {
         get: {
@@ -269,11 +332,7 @@ module.exports = (baseUrl, enableAuth) => {
               description: "Transaction object",
               content: {
                 "application/json": {
-                  content: {
-                    "application/json": {
-                      schema: { $ref: "#/components/schemas/Transaction" },
-                    },
-                  },
+                  schema: { $ref: "#/components/schemas/Transaction" },
                 },
               },
             },
@@ -349,10 +408,42 @@ module.exports = (baseUrl, enableAuth) => {
           },
         },
       },
-      "/secure/system/transaction-type/code/{code}": {
+      "/secure/system/bank": {
         get: {
           ...securityOpts,
-          summary: "Get transaction-type from transaction code",
+          summary: "List of banks",
+          tags: ["System Environment"],
+          parameters: [
+            { $ref: "#/components/parameters/page" },
+            { $ref: "#/components/parameters/limit" },
+            { $ref: "#/components/parameters/order" },
+            { $ref: "#/components/parameters/sort" },
+            { $ref: "#/components/parameters/search" },
+          ],
+          responses: {
+            "200": {
+              description: "Success",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      $ref: "#/components/schemas/Bank",
+                    },
+                  },
+                },
+              },
+            },
+            "401": {
+              $ref: "#/components/responses/401",
+            },
+          },
+        },
+      },
+      "/secure/system/bank/code/{code}": {
+        get: {
+          ...securityOpts,
+          summary: "Get Bank from their bank code",
           tags: ["System Environment"],
           parameters: [
             {
@@ -368,7 +459,37 @@ module.exports = (baseUrl, enableAuth) => {
               content: {
                 "application/json": {
                   schema: {
-                    $ref: "#/components/schemas/TransactionType",
+                    $ref: "#/components/schemas/Bank",
+                  },
+                },
+              },
+            },
+            "401": {
+              $ref: "#/components/responses/401",
+            },
+          },
+        },
+      },
+      "/secure/system/transaction-type/code/{code}": {
+        get: {
+          ...securityOpts,
+          summary: "Get Transaction Type from their bank code",
+          tags: ["System Environment"],
+          parameters: [
+            {
+              in: "path",
+              name: "code",
+              type: "string",
+              required: true,
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Success",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Bank",
                   },
                 },
               },
