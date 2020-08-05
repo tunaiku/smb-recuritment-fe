@@ -42,17 +42,17 @@ const generateAccountsWithName = (sampleSize = 2) => {
 const generateBanks = () => {
   return [
     {
-      name: "BANK BRI",
-      code: "002",
+      name: "BANK AKBARRIZ",
+      code: "001",
     },
     {
-      name: "BANK MANDIRI",
-      code: "008",
+      name: "BANK JOS",
+      code: "002",
     },
 
     {
-      name: "BANK BCA",
-      code: "014",
+      name: "BANK ABC",
+      code: "003",
     },
   ];
 };
