@@ -287,7 +287,7 @@ module.exports = (baseUrl, enableAuth) => {
         },
         post: {
           ...securityOpts,
-          tags: ["User's Actions"],
+          tags: ["User Actions"],
           summary: "Create a new transaction",
           requestBody: {
             content: {
